@@ -27,6 +27,9 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Dockerfile
+        file: docker/Dockerfile
         push: true
-        tags: your-dockerhub-username/your-image-name:latest
+        tags: |
+          ${{ secrets.DOCKER_USERNAME }}/friends-backend:${{ github.sha }}
+          ${{ secrets.DOCKER_USERNAME }}/friends-backend:latest
+  

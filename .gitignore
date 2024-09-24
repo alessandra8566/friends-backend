@@ -5,3 +5,7 @@ __pycache__/
 *$py.class
 
 pgdata/
+
+docker/minio-data/*
+docker/pgdata/*
+docker/docker-compose.yaml
