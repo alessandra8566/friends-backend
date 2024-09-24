@@ -24,7 +24,7 @@ class UserCollection(object):
         hash_pwd = self.get_password_hash(user_info.password)
         user_info.password = hash_pwd
         db_user = crud.post_user(self.db, user_info)
-        user_profile = UserProfileCreate(user_id=db_user.id, description="")
+        user_profile = UserProfileCreate(user_id=db_user.id, name=db_user.name, description="")
         crud.post_user_profile(self.db, user_profile)
         token_info = TokenData(
             user_id=db_user.id,

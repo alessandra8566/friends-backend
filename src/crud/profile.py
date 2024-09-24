@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 from uuid import UUID, uuid4
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from db.model import UserProfile, Image
 from schema import UserProfileCreate, UserProfilePatch, ImageCreate
 
@@ -12,6 +12,20 @@ def get_profile_by_user_id(db: Session, user_id: UUID):
         return db_user_profile
     except Exception as e:
         raise e
+    
+def get_profile_by_id(db: Session, profile_id: UUID):
+    try:
+        db_user_profile = db.query(UserProfile).filter(UserProfile.id == profile_id).first()
+        return db_user_profile
+    except Exception as e:
+        raise e
+    
+def get_profile_list_with_avatar(db: Session, limit: int = 30):
+    try:
+        profiles_with_avatar_images = db.query(UserProfile).join(UserProfile.images).filter(Image.avatar == True).options(joinedload(UserProfile.images)).all()
+        return profiles_with_avatar_images
+    except Exception as e:
+        raise e
 
 def post_user_profile(db: Session, user: UserProfileCreate):
     try:
@@ -19,6 +33,7 @@ def post_user_profile(db: Session, user: UserProfileCreate):
             id=uuid4(),
             description=user.description,
             user_id=user.user_id,
+            name=user.name,
             create_at=datetime.now()
         )
         

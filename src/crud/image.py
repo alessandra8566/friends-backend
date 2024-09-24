@@ -28,3 +28,11 @@ def get_images_by_user_id(db: Session, user_id: int):
         return db.query(Image).filter(Image.user_id == user_id).all()
     except Exception as e:
         raise e
+def delete_image_by_id(db: Session, image_id: int):
+    try:
+        db.query(Image).filter(Image.id == image_id).delete()
+        db.commit()
+        return True
+    except Exception as e:
+        db.rollback()
+        raise e

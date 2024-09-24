@@ -4,6 +4,7 @@ from uuid import UUID
 
 from fastapi import File, UploadFile
 
+import conf
 import crud
 from minio_client import MinioClient
 from schema.image import ImageCreate
@@ -20,15 +21,14 @@ class UserImagesCollection(object):
     def upload_image(self, user_profile_id: UUID, index, avatar, file: UploadFile = File(...)):
         # Upload the file to MinIO
         file_location = f"{user_profile_id}/{file.filename}"
-        self.minio_client.upload_file("image", file.filename, file.file, file.size)
+        self.minio_client.upload_file(conf.MINIO_BUCKET_NAME, file_location, file.file, file.size)
         
-        download_url = self.minio_client.client.get_presigned_url("GET", "image", file.filename, expires=timedelta(days=7))
-        print(download_url)
+        download_url = conf.DOMAIN + conf.MINIO_BUCKET_NAME + f"/{file_location}"
+        
         # Store the image info in the database
-        print(file)
         image_create = ImageCreate(
             name=file.filename,
-            url=file_location,
+            url=download_url,
             user_profile_id=user_profile_id,
             index=index,
             avatar=self.str_to_bool(avatar),
@@ -36,3 +36,15 @@ class UserImagesCollection(object):
         
         db_images = crud.post_profile_image(self.db, image_create)
         return db_images
+    
+    def delete_image(self, user_profile_id: UUID, image_id: UUID):
+        # Get the image info from the database
+        db_image = crud.get_image(self.db, image_id)
+        
+        # Delete the image from MinIO
+        file_location = f"{user_profile_id}/{db_image.name}"
+        self.minio_client.remove_file(conf.MINIO_BUCKET_NAME, file_location)
+        
+        # Delete the image info from the database
+        crud.delete_image_by_id(self.db, image_id)
+        return True

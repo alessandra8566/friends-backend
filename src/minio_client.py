@@ -26,3 +26,11 @@ class MinioClient:
 
     def list_buckets(self):
         return self.client.list_buckets()
+    
+    def remove_file(self, bucket_name, object_name):
+        try:
+            self.client.remove_object(bucket_name, object_name)
+            return True
+        except S3Error as err:
+            print(f"Error: {err}")
+            return False

@@ -6,6 +6,7 @@ from schema.image import Image
 
 
 class UserProfileBase(BaseModel):
+    name: str = ""
     description: str = ""
     class Config:
         orm_mode = True

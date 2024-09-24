@@ -5,6 +5,7 @@ class UserProfile(Base):
     
     id              = Column(UUID(as_uuid=True), primary_key=True)
     user_id         = Column(UUID(as_uuid=True), ForeignKey('user.id', ondelete='CASCADE'))
+    name            = Column(String, nullable=False)
     description     = Column(String, nullable=True)
     create_at       = Column(DateTime, unique=True, nullable=False)
     

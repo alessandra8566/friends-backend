@@ -15,8 +15,6 @@ services:
     image: minio/minio
     restart: always
     environment:
-      # MINIO_ACCESS_KEY: cICZ6l47pWLMCbgM75EG
-      # MINIO_SECRET_KEY: ODvdq5WyRzHQPpMdGvvmxTZJWjDN6A69Bkyx5tr1
       MINIO_ROOT_USER: sandra
       MINIO_ROOT_PASSWORD: st910018
     ports:

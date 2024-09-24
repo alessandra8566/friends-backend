@@ -11,6 +11,7 @@ DB_CONNECT_STRING           = os.getenv("DB_CONNECT_STRING")
 
 # api
 API_SERVER_PORT             = 8000
+DOMAIN                     = os.getenv("DOMAIN")
 
 # jwt
 SECRET_KEY                  = os.getenv("JWT_SECRET_KET")
@@ -24,4 +25,5 @@ MINIO_ACCESS_KEY            = os.getenv("MINIO_ACCESS_KEY")
 MINIO_SECRET_KEY            = os.getenv("MINIO_SECRET_KEY")
 MINIO_ROOT_USER             = os.getenv("MINIO_ROOT_USER")
 MINIO_ROOT_PASSWORD         = os.getenv("MINIO_ROOT_PASSWORD")
+MINIO_BUCKET_NAME           = os.getenv("MINIO_BUCKET_NAME")
 

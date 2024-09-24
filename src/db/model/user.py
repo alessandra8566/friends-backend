@@ -11,9 +11,9 @@ class User(Base):
     __tablename__ = 'user'
     
     id              = Column(UUID(as_uuid=True), primary_key=True)
-    name            = Column(String, unique=True, nullable=False)
+    name            = Column(String, nullable=False)
     email           = Column(String, unique=True, nullable=False)
     hashed_password = Column(String)
-    role            = Column(String, unique=True)
+    role            = Column(String)
     refresh_token   = Column(String, unique=True)
     create_at       = Column(DateTime, unique=True, nullable=False)
