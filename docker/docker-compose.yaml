@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_DB: friends
+      POSTGRES_USER: sandra
+      POSTGRES_PASSWORD: st910018 
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  minio:
+    image: minio/minio
+    restart: always
+    environment:
+      # MINIO_ACCESS_KEY: cICZ6l47pWLMCbgM75EG
+      # MINIO_SECRET_KEY: ODvdq5WyRzHQPpMdGvvmxTZJWjDN6A69Bkyx5tr1
+      MINIO_ROOT_USER: sandra
+      MINIO_ROOT_PASSWORD: st910018
+    ports:
+      - "9000:9000"
+      - "9001:9001"  # Optional for MinIO Console
+    command: server --console-address ":9001" /data
+    volumes:
+      - ./minio-data:/data
