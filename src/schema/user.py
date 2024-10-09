@@ -1,32 +1,28 @@
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import datetime
 from typing import Optional
 from uuid import UUID
 from pydantic import BaseModel
 
-class Role(str, Enum):
-    ADMIN       = "admin"
-    VIP1_USER   = "vip1_user"
-    VIP2_USER   = "vip2_user"
-    BASE_USER   = "user"
+from db.model.user import Gender, Role
 
 class UserBase(BaseModel):
-    name: str
     email: str
-    role: Role = "user"
-    
+    birthday: str
+    gender: Gender = Gender.MALE
+    role: Role = Role.BASE_USER
     class Config:
         orm_mode = True
 
 class UserCreate(UserBase):
+    name: str
     password: str
     class Config:
         orm_mode = True
 
 class User(UserBase):
     id: UUID
-    create_at: datetime
-    
+    created_at: datetime
+    updated_at: datetime    
     class Config:
         orm_mode = True
 
@@ -43,5 +39,7 @@ class TokenData(BaseModel):
     user_id: Optional[UUID] = None
     email: Optional[str] = None
     name: Optional[str] = None
+    birthday: Optional[str] = None
+    gender: Optional[Gender] = None
     hashed_password: Optional[str] = None
     role: Optional[Role] = None

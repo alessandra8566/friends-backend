@@ -10,19 +10,19 @@ import schema, crud
 
 router = APIRouter()
 
-@router.get("", response_model=schema.UserProfile)
+@router.get("", response_model=schema.Profile)
 def get_my_profile(db: Session = Depends(get_db), user: User = Depends(validate_token)):
-    users = crud.get_profile_by_user_id(db, user.id)
+    users = crud.get_profile_by_id(db, user.id)
     return users
 
 @router.get("/view/{profile_id}", response_model=schema.UserProfile)
 def get_profile(profile_id: UUID, db: Session = Depends(get_db), _: None = Depends(validate_token)):
-    user_profile = crud.get_profile_by_id(db, profile_id)
+    user_profile = crud.get_user_profile_by_id(db, profile_id)
     return user_profile
 
-@router.patch("/{profile_id}", response_model=schema.UserProfile)
-def path_user_profile(profile_id: UUID, profile_info: schema.UserProfilePatch, db: Session = Depends(get_db), _: None = Depends(validate_token)):
-    user_profile = crud.patch_user_profile(db, profile_id, profile_info)
+@router.patch("/{profile_id}", response_model=schema.Profile)
+def path_user_profile(profile_id: UUID, profile_info: schema.ProfilePatch, db: Session = Depends(get_db), _: None = Depends(validate_token)):
+    user_profile = crud.patch_profile(db, profile_id, profile_info)
     return user_profile
 
 @router.post("/{profile_id}/image", response_model=schema.Image)
@@ -37,7 +37,7 @@ def delete_image(profile_id: UUID, image_id: UUID, db: Session = Depends(get_db)
     _collect.delete_image(profile_id, image_id)
     return "success"
 
-@router.get("/avatars", response_model=List[schema.UserProfile])
+@router.get("/avatars", response_model=List[schema.Profile])
 def get_profiles_with_avatar(db: Session = Depends(get_db), _: None = Depends(validate_token)):
     profiles = crud.get_profile_list_with_avatar(db)
     return profiles

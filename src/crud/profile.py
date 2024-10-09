@@ -2,39 +2,52 @@ from datetime import datetime
 from typing import List
 from uuid import UUID, uuid4
 from sqlalchemy.orm import Session, joinedload
-from db.model import UserProfile, Image
-from schema import UserProfileCreate, UserProfilePatch, ImageCreate
+from db.model import Profile, Image, User
+from schema import ProfileCreate, ProfilePatch, ImageCreate
 
 
-def get_profile_by_user_id(db: Session, user_id: UUID):
+def get_profile_by_id(db: Session, id: UUID):
     try:
-        db_user_profile = db.query(UserProfile).filter(UserProfile.user_id == user_id).first()
+        db_user_profile = db.query(Profile).filter(Profile.id == id).first()
         return db_user_profile
     except Exception as e:
         raise e
-    
-def get_profile_by_id(db: Session, profile_id: UUID):
+def get_user_profile_by_id(db: Session, id: UUID):
     try:
-        db_user_profile = db.query(UserProfile).filter(UserProfile.id == profile_id).first()
+        db_user_profile = db.query(Profile).filter(Profile.id == id).first()
+        db_user = db.query(User).filter(User.id == id).first()
+        db_user_profile.gender = db_user.gender
+        db_user_profile.birthday = db_user.birthday
         return db_user_profile
     except Exception as e:
         raise e
     
 def get_profile_list_with_avatar(db: Session, limit: int = 30):
     try:
-        profiles_with_avatar_images = db.query(UserProfile).join(UserProfile.images).filter(Image.avatar == True).options(joinedload(UserProfile.images)).all()
+        profiles_with_avatar_images = db.query(Profile).join(Profile.images).filter(Image.avatar == True).options(joinedload(Profile.images)).all()
         return profiles_with_avatar_images
     except Exception as e:
         raise e
 
-def post_user_profile(db: Session, user: UserProfileCreate):
+def post_profile(db: Session, user: ProfileCreate):
     try:
-        db_user_profile = UserProfile(
-            id=uuid4(),
-            description=user.description,
-            user_id=user.user_id,
+        db_user_profile = Profile(
+            id=user.id,
             name=user.name,
-            create_at=datetime.now()
+            introduce=user.introduce,
+            like_style=user.like_style,
+            constellation=user.constellation,
+            location=user.location,
+            weight=user.weight,
+            height=user.height,
+            job=user.job,
+            education=user.education,
+            hobby=user.hobby,
+            smoke=user.smoke,
+            drink=user.drink,
+            languages=user.languages,
+            created_at=datetime.now(),
+            updated_at=datetime.now()
         )
         
         db.add(db_user_profile)
@@ -45,11 +58,12 @@ def post_user_profile(db: Session, user: UserProfileCreate):
     except Exception as e:
         raise e
 
-def patch_user_profile(db: Session, profile_id: UUID, profile: UserProfilePatch):
+def patch_profile(db: Session, id: UUID, profile: ProfilePatch):
     try:
-        db_user_profile = db.query(UserProfile).filter(UserProfile.id == profile_id).first()
+        db_user_profile = db.query(Profile).filter(Profile.id == id).first()
         if db_user_profile:
-            db_user_profile.description = profile.description
+            for key, value in profile.model_dump().items():
+                setattr(db_user_profile, key, value)
             db.commit()
             db.refresh(db_user_profile)
             return db_user_profile
@@ -68,7 +82,8 @@ def post_profile_images(db: Session, image_list: List[ImageCreate]):
                 index=image.index,
                 avatar=image.avatar,
                 user_id=image.profile_user_id,
-                create_at=datetime.now()
+                created_at=datetime.now(),
+                updated_at=datetime.now()
             ) for image in image_list
         ]
         
@@ -91,7 +106,8 @@ def post_profile_image(db: Session, image: ImageCreate):
             index=image.index,
             avatar=image.avatar,
             user_profile_id=image.user_profile_id,
-            create_at=datetime.now()
+            created_at=datetime.now(),
+            updated_at=datetime.now()
         )
         
         db.add(db_image)

@@ -18,7 +18,7 @@ class ImageCreate(ImageBase):
 
 class Image(ImageBase):
     id: UUID
-    create_at: datetime
+    created_at: datetime
     
     class Config:
         orm_mode = True

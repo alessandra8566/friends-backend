@@ -10,7 +10,7 @@ from db.model.user import User
 
 def get_users(db: Session, limit: int = 10):
     try:
-        return db.query(User).order_by(User.create_at.desc()).limit(limit).all()
+        return db.query(User).order_by(User.created_at.desc()).limit(limit).all()
     except Exception as e:
         raise e
 
@@ -41,11 +41,13 @@ def post_user(db: Session, user: UserCreate):
     try:
         db_user = User(
             id=uuid4(),
-            name=user.name,
             email=user.email,
+            birthday=user.birthday,
+            gender=user.gender,
             role=user.role,
             hashed_password=user.password,
-            create_at=datetime.now()
+            created_at=datetime.now(),
+            updated_at=datetime.now()
         )
         
         db.add(db_user)

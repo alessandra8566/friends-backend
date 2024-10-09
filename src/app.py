@@ -4,26 +4,11 @@ from fastapi.responses import JSONResponse
 from db import Base, engine
 from minio_client import MinioClient
 from router import user, image, profile
-from starlette.middleware.base import BaseHTTPMiddleware
 
 Base.metadata.create_all(bind=engine)
 
-class LimitRequestSizeMiddleware(BaseHTTPMiddleware):
-    def __init__(self, app: FastAPI, max_size: int):
-        super().__init__(app)
-        self.max_size = max_size
-
-    async def dispatch(self, request: Request, call_next):
-        if int(request.headers.get('content-length', 0)) > self.max_size:
-            return JSONResponse(
-                status_code=413,
-                content={"message": "Request Entity Too Large"},
-            )
-        return await call_next(request)
-
 app = FastAPI(debug=True)
 
-app.add_middleware(LimitRequestSizeMiddleware, max_size=100 * 1024 * 1024) # 100 MB
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # List of allowed origins

@@ -9,6 +9,7 @@ class Image(Base):
     index             = Column(Integer, nullable=True)
     user_profile_id   = Column(UUID(as_uuid=True), ForeignKey('user_profile.id'))
     avatar            = Column(Boolean, default=False)
-    create_at         = Column(DateTime, nullable=False)
+    created_at        = Column(DateTime, nullable=False)
+    updated_at        = Column(DateTime, nullable=False)
     
-    user_profile      = relationship('UserProfile', back_populates='images')    
+    user_profile      = relationship('Profile', back_populates='images')

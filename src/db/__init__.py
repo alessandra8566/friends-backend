@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Table, UUID, DateTime, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Table, UUID, DateTime, Boolean, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 import conf as settings
@@ -14,6 +14,7 @@ __all__ = [
     'Boolean',
     'DateTime',
     'ForeignKey',
+    'Enum',
     'Table',
     'UUID',
     'relationship',

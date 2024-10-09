@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
-from schema.profile import UserProfileCreate
+from schema.profile import ProfileCreate
 from schema.user import Token, TokenData, UserCreate, UserLogin
 import conf, jwt, crud
 
@@ -24,12 +24,17 @@ class UserCollection(object):
         hash_pwd = self.get_password_hash(user_info.password)
         user_info.password = hash_pwd
         db_user = crud.post_user(self.db, user_info)
-        user_profile = UserProfileCreate(user_id=db_user.id, name=db_user.name, description="")
-        crud.post_user_profile(self.db, user_profile)
+        user_profile = ProfileCreate(
+            id=db_user.id,
+            name=user_info.name,
+        )
+        db_user_profile = crud.post_profile(self.db, user_profile)
         token_info = TokenData(
             user_id=db_user.id,
             email=db_user.email,
-            name=db_user.name,
+            name=db_user_profile.name,
+            gender=db_user.gender,
+            birthday=db_user.birthday,
             hashed_password=db_user.hashed_password,
             role=db_user.role
         )
@@ -46,14 +51,18 @@ class UserCollection(object):
                 detail="Invalid username or password",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+        print(db_user)
         # Step 3: Create JWT token
+        db_user_profile = crud.get_profile_by_id(self.db, db_user.id)
         access_token_expires = timedelta(minutes=conf.ACCESS_TOKEN_EXPIRE_MINUTES)
         access_token = self.create_access_token(
                 data=TokenData(
                         user_id=db_user.id,
                         email=db_user.email,
-                        name=db_user.name,
+                        name=db_user_profile.name,
                         hashed_password=db_user.hashed_password,
+                        birthday=db_user.birthday,
+                        gender=db_user.gender,
                         role=db_user.role
                     ),
                 expires_delta=access_token_expires

@@ -8,7 +8,7 @@ from db.model.image import Image
     
 def get_images(db: Session, limit: int = 30):
     try:
-        return db.query(Image).order_by(Image.create_at.desc()).limit(limit).all()
+        return db.query(Image).order_by(Image.created_at.desc()).limit(limit).all()
     except Exception as e:
         raise e
     

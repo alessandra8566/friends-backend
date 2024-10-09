@@ -1,9 +1,9 @@
 from .user import User
 from .image import Image
-from .profile import UserProfile
+from .profile import Profile
 
 __all__ = [
     'User',
-    'UserProfile',
+    'Profile',
     'Image',
 ]

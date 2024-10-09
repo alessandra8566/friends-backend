@@ -32,4 +32,14 @@ jobs:
         tags: |
           ${{ secrets.DOCKER_USERNAME }}/friends-backend:${{ github.sha }}
           ${{ secrets.DOCKER_USERNAME }}/friends-backend:latest
+
+    - name: Deploy to remote server via SSH
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: ${{ secrets.REMOTE_HOST }}              # Remote server IP or hostname
+        username: ${{ secrets.REMOTE_USER }}          # SSH username
+        key: ${{ secrets.REMOTE_KEY }}      # SSH password (or use private key)
+        script: |
+          cd friends
+          source restart.sh
   
